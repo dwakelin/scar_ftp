@@ -1,6 +1,7 @@
 # client.py  
 import socket
 import struct
+import os
 
 class ftpClient:
     def __init__(self):
@@ -51,9 +52,81 @@ class ftpClient:
         str = data.decode('utf-8')
         print(str)
 
+    def recvInt(self):
+        temp = self.socketReadSize(4)
+        value = struct.unpack('!i', temp)[0]
+        print("recvInt received %i" % value)
+        return value
+        
     def cmdList(self):
         self.send('LIST')
         self.recvLenData()
+    
+    def cmdUpload(self):
+        upload = input("Enter file you would like to upload > ").strip()
+        if os.path.isfile(upload):
+            print("File exists")
+        else:
+            print("File does not exist")
+            return
+        self.send('UPLD')
+        self.sendLenData(upload)
+        
+        file_exists = self.recvInt()
+        if file_exists != 1:
+            print("Error: File already exists")
+            return
+        file = open(upload, "rb")
+        data = file.read()
+        file.close()
+        self.sendLenBinaryData(data)    
+    
+    def cmdDownload(self):
+       self.send('DWLD')
+       download = input("Enter file you would like to download > ").strip()
+       file = self.recvLenData()
+       print("got %s file to download" % file)
+       if os.path.isfile(file):
+            self.sendInt(-1)
+            print ("sent -1")
+       else:
+            self.sendInt(1)
+            print ("sent 1")
+       data = self.recvLenData()
+       new_file = open(file, "wb")
+       new_file.write(data)
+       new_file.close()
+
+    def sendLenData(self, data):
+        b = bytes(data, 'utf-8')
+        lenData = struct.pack('!I', len(b)) + b
+#        print("sending lenData '%s'" % lenData)
+        self.serverClient.send(lenData)
+         
+    def sendLenBinaryData(self, data):
+        lenData = struct.pack('!I', len(data)) + data
+        print("sending lenData %u bytes" % len(data))
+        self.serverClient.sendall(lenData)
+         
+    def cmdDelete(self):
+        delete = input("Enter file you would like to delete > ").strip() 
+        self.send('DELF')
+        self.sendLenData(delete)
+        
+        # wait for server reply
+        file_exists = self.recvInt()
+        if file_exists != -1:
+            cmd = input("Do you want to delete %s? (Yes, No)" % delete).strip()
+            if cmd.upper() == 'YES':
+                self.send("Yes")
+                print ("File deleted")
+            if cmd.upper() == 'NO':
+                print ("Delete abandoned by the user!")
+                return
+        else:
+            print("The file does not exist on server")
+            return
+        
 
     def requestLoop(self):
         while True:
@@ -68,6 +141,15 @@ class ftpClient:
                 continue
             elif cmd.upper() == 'LIST':
                 self.cmdList()
+                continue
+            elif cmd.upper() == 'UPLD':
+                self.cmdUpload()
+                continue
+            elif cmd.upper() == 'DWLD':
+                self.cmdDownload()
+                continue
+            elif cmd.upper() == 'DELF':
+                self.cmdDelete()
                 continue
             elif cmd.upper() == 'QUIT':
                 exit(0);
