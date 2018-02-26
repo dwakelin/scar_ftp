@@ -82,20 +82,21 @@ class ftpClient:
         self.sendLenBinaryData(data)    
     
     def cmdDownload(self):
-       self.send('DWLD')
-       download = input("Enter file you would like to download > ").strip()
-       file = self.recvLenData()
-       print("got %s file to download" % file)
-       if os.path.isfile(file):
+        download = input("Enter file you would like to download > ").strip()
+        self.send('DWLD')
+        self.sendLenData(download)
+        file = self.recvLenData()
+        print("got %s file to download" % file)
+        if os.path.isfile(file):
             self.sendInt(-1)
             print ("sent -1")
-       else:
+        else:
             self.sendInt(1)
             print ("sent 1")
-       data = self.recvLenData()
-       new_file = open(file, "wb")
-       new_file.write(data)
-       new_file.close()
+        data = self.recvLenBinaryData()
+        new_file = open(file, "wb")
+        new_file.write(data)
+        new_file.close()
 
     def sendLenData(self, data):
         b = bytes(data, 'utf-8')

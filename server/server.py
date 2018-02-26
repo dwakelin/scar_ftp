@@ -99,14 +99,14 @@ class ftpServer:
         new_file.close()
 
     def cmdDownload(self):
+        download = self.recvLenData()
         if os.path.isfile(download):
-            print("File exists")
+            print("File downloaded to client")
         else:
             print("File does not exist")
             return
-        self.send('DWLD')
         self.sendLenData(download)
-
+        
         file_exists = self.recvInt()
         if file_exists != 1:
             print("Error: File already exists")
@@ -114,7 +114,7 @@ class ftpServer:
         file = open(download, "rb")
         data = file.read()
         file.close()
-        self.sendLenData(data)
+        self.sendLenBinaryData(data)
 
     def cmdDelete(self):
         file = self.recvLenData()
@@ -162,7 +162,7 @@ class ftpServer:
                     self.cmdDownload()
                 elif stringdata.upper() == 'DELF':
                     self.cmdDelete()
-                elif stringdata.upper() == 'EXIT':
+                elif stringdata.upper() == 'QUIT':
                     break
                 else:
                     print("Didn't understand %s" % (stringdata))
