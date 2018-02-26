@@ -23,11 +23,13 @@ class ftpServer:
         self.serverSocket.listen(5)                                           
 
     def sendData(self, data):
+        #sends data to the client
         print("sending '%s'" % data)
         self.clientSocket.send(data.encode())
         return
 
     def sendLenData(self, data):
+        #sends length of data to client
         b = bytes(data, 'utf-8')
         lenData = struct.pack('!I', len(b)) + b
 #        print("sending lenData '%s'" % lenData)
@@ -35,6 +37,7 @@ class ftpServer:
         return
 
     def sendInt(self, value):
+        #sends int to client
         lenData = struct.pack('!i', value)
 #        print("sending lenData '%s'" % lenData)
         self.clientSocket.send(lenData)
@@ -59,6 +62,7 @@ class ftpServer:
         return buf
         
     def recvLenData(self):
+        #recieves length of data from client
         temp = self.socketReadSize(4)
         len = struct.unpack('!I', temp)[0]
         data = self.socketReadSize(len)
@@ -67,32 +71,38 @@ class ftpServer:
         return str
         
     def recvLenBinaryData(self):
+        #recieves length of binary data from client
         temp = self.socketReadSize(4)
         len = struct.unpack('!I', temp)[0]
         data = self.socketReadSize(len)
         return data
         
     def recvString(self):
+        #recieves string from client
         data = self.clientSocket.recv(1024)
         stringdata = data.decode('utf-8')
         print("recvString %s " % (stringdata))
         return stringdata
          
     def cmdList(self):
+        #lists files on server
         self.directoryListing = '';
         self.addDirectoryContentsToList('.')
         self.sendLenData(self.directoryListing)
         return
         
     def cmdUpload(self):
+        #recieves length of data from client
         file = self.recvLenData()
         print("got %s file to upload" % file)
+        #checks to see if file already exists on server
         if os.path.isfile(file):
             self.sendInt(-1)
             print ("sent -1")
         else:
             self.sendInt(1)
             print ("sent 1")
+        #uploads file to server
         data = self.recvLenBinaryData()
         new_file = open(file, "wb")
         new_file.write(data)
@@ -117,8 +127,10 @@ class ftpServer:
         self.sendLenBinaryData(data)
 
     def cmdDelete(self):
+        #recieves lenth of data from client
         file = self.recvLenData()
         print("got %s file to delete" % file)
+        #checks if file exists
         if os.path.isfile(file):
             self.sendInt(1)
         else:
@@ -127,6 +139,7 @@ class ftpServer:
         # wait for client yes or no
         yes_or_no = self.recvString()
         #print("DELT: got back %s" % yes_or_no)
+        #deletes file
         if yes_or_no == "Yes":
             os.remove(file)
             print ("File successfully deleted")

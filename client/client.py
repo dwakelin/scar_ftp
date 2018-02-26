@@ -36,6 +36,7 @@ class ftpClient:
         self.serverClient.sendall(cmd.encode())
 
     def socketReadSize(self, size):
+        #reads size of file
         buf = bytes()
         while size > 0:
             data = self.serverClient.recv(size)
@@ -46,6 +47,7 @@ class ftpClient:
         return buf
         
     def recvLenData(self):
+        #recieves length of file from the server
         temp = self.socketReadSize(4)
         len = struct.unpack('!I', temp)[0]
         data = self.socketReadSize(len)
@@ -53,17 +55,21 @@ class ftpClient:
         print(str)
 
     def recvInt(self):
+        #recieves int from server
         temp = self.socketReadSize(4)
         value = struct.unpack('!i', temp)[0]
         print("recvInt received %i" % value)
         return value
         
     def cmdList(self):
+        #lists files on the server
         self.send('LIST')
         self.recvLenData()
     
     def cmdUpload(self):
+        #enter file you wnat to upload
         upload = input("Enter file you would like to upload > ").strip()
+        #checks if file exists or not on the client
         if os.path.isfile(upload):
             print("File uploaded to server")
         else:
@@ -71,11 +77,12 @@ class ftpClient:
             return
         self.send('UPLD')
         self.sendLenData(upload)
-        
+        #checks if file exists or not on the server
         file_exists = self.recvInt()
         if file_exists != 1:
             print("Error: File already exists")
             return
+        #uploads file to server
         file = open(upload, "rb")
         data = file.read()
         file.close()
@@ -99,23 +106,27 @@ class ftpClient:
         new_file.close()
 
     def sendLenData(self, data):
+        #send length of data to the server
         b = bytes(data, 'utf-8')
         lenData = struct.pack('!I', len(b)) + b
 #        print("sending lenData '%s'" % lenData)
         self.serverClient.send(lenData)
          
     def sendLenBinaryData(self, data):
+        #send length of binary data to the server
         lenData = struct.pack('!I', len(data)) + data
         print("sending lenData %u bytes" % len(data))
         self.serverClient.sendall(lenData)
          
     def cmdDelete(self):
+        #enter what file you would like to delete 
         delete = input("Enter file you would like to delete > ").strip() 
         self.send('DELF')
         self.sendLenData(delete)
         
-        # wait for server reply
+        # wait for server reply and check if file exists
         file_exists = self.recvInt()
+        # check you want to delete the file
         if file_exists != -1:
             cmd = input("Do you want to delete %s? (Yes, No)" % delete).strip()
             if cmd.upper() == 'YES':
