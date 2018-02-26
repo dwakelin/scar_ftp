@@ -35,6 +35,15 @@ class server(object):
         new_file.close()
         return "Success"
 
+    def cmdDownload(self, fileName):
+        print("cmdDownload file \"%s\"" % (fileName))
+        if not os.path.isfile(fileName):
+            return "";
+        file = open(fileName, "rb")
+        data = file.read()
+        file.close()
+        return data
+
     def cmdDelete(self, file):
         print("cmdDelete file \"%s\"" % (file))
         if os.path.isfile(file):

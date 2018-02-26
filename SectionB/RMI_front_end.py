@@ -94,6 +94,25 @@ class frontEnd(object):
         print("total_deletes=%u" % total_deletes)
         return "total_deletes=%u" % total_deletes
 
+    def clientDownloadChk(self, fileName):
+        print("clientDownloadChk fileName=%s" % fileName)
+        ret = -1
+        if fileName in remoteFiles:
+            ret = 1
+        print("clientDownloadChk ret=%u" % ret)
+        return ret
+
+    def clientDownload(self, fileName):
+        print("clientDownload file \"%s\"" % (fileName))
+        index = remoteFiles.index(fileName)
+        print("%u: %s" % (index, fileName))
+        for server_index, server in enumerate(remoteServerList):
+            if (index,server_index) in remoteFilesServers:
+                print("clientDownload calling server index %u for file %s" % (server_index, fileName))
+                return server.rmi.cmdDownload(fileName)
+        print("clientDownload failed to find file %s" % fileName)
+        return ""
+
 daemon = Pyro4.Daemon()        # make a Pyro daemon
 uri = daemon.register(frontEnd)   # register the Hello as a Pyro object
 
