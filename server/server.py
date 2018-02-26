@@ -111,16 +111,12 @@ class ftpServer:
     def cmdDownload(self):
         download = self.recvLenData()
         if os.path.isfile(download):
-            print("File downloaded to client")
+            print("File %s exists for downloaded to client" % download)
         else:
             print("File does not exist")
+            self.sendInt(-1)
             return
-        self.sendLenData(download)
-        
-        file_exists = self.recvInt()
-        if file_exists != 1:
-            print("Error: File already exists")
-            return
+            
         file = open(download, "rb")
         data = file.read()
         file.close()

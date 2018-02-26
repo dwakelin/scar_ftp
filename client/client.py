@@ -90,16 +90,12 @@ class ftpClient:
     
     def cmdDownload(self):
         download = input("Enter file you would like to download > ").strip()
+        if os.path.isfile(download):
+            print ("Error file already exits locally %s" % download)
         self.send('DWLD')
         self.sendLenData(download)
         file = self.recvLenData()
         print("got %s file to download" % file)
-        if os.path.isfile(file):
-            self.sendInt(-1)
-            print ("sent -1")
-        else:
-            self.sendInt(1)
-            print ("sent 1")
         data = self.recvLenBinaryData()
         new_file = open(file, "wb")
         new_file.write(data)
@@ -147,6 +143,8 @@ class ftpClient:
 
             if cmd.upper() == 'HELP':
                 print("Client help options are help");
+                print("CONN\tconnect to server");
+                print("LIST\tlist files on remote server");
                 continue
             elif cmd.upper() == 'CONN':
                 self.cmdConnection()
@@ -164,6 +162,7 @@ class ftpClient:
                 self.cmdDelete()
                 continue
             elif cmd.upper() == 'QUIT':
+                print("Closing session to server")
                 exit(0);
              
             if self.serverClient is None:
