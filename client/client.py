@@ -65,7 +65,7 @@ class ftpClient:
     def cmdUpload(self):
         upload = input("Enter file you would like to upload > ").strip()
         if os.path.isfile(upload):
-            print("File exists")
+            print("File uploaded to server")
         else:
             print("File does not exist")
             return
