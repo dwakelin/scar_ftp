@@ -87,19 +87,24 @@ class ftpClient:
         data = file.read()
         file.close()
         self.sendLenBinaryData(data)    
-    
+        print("Successfully uploaded file of %u bytes" % len(data))
+
     def cmdDownload(self):
         download = input("Enter file you would like to download > ").strip()
         if os.path.isfile(download):
-            print ("Error file already exits locally %s" % download)
+            print("Error file already exits locally")
+            return
         self.send('DWLD')
         self.sendLenData(download)
-        file = self.recvLenData()
-        print("got %s file to download" % file)
-        data = self.recvLenBinaryData()
-        new_file = open(file, "wb")
+        server_response = self.recvInt()
+        if server_response == -1:
+            print("No such file on server")
+            return
+        data = self.socketReadSize(server_response)
+        new_file = open(download, "wb")
         new_file.write(data)
         new_file.close()
+        print("Successfully downloaded file of %u bytes" % server_response)
 
     def sendLenData(self, data):
         #send length of data to the server
@@ -142,9 +147,9 @@ class ftpClient:
             cmd = input("Enter cmd > ").strip()                             
 
             if cmd.upper() == 'HELP':
-                print("Client help options are help");
-                print("CONN\tconnect to server");
-                print("LIST\tlist files on remote server");
+                print("Client help options are help")
+                print("CONN\tconnect to server")
+                print("LIST\tlist files on remote server")
                 continue
             elif cmd.upper() == 'CONN':
                 self.cmdConnection()
@@ -163,19 +168,11 @@ class ftpClient:
                 continue
             elif cmd.upper() == 'QUIT':
                 print("Closing session to server")
-                exit(0);
+                exit(0)
              
             if self.serverClient is None:
                 print("No connection to a server, you must connect (using CONN) first")
                 continue
-                
-            self.serverClient.sendall(cmd.encode())
-
-            # Receive no more than 1024 bytes
-            data = self.serverClient.recv(1024)                                     
-            if not data: break    
-            stringdata = data.decode('utf-8')
-            print("Got back %s" % (stringdata))
 
         self.serverClient.close()
 

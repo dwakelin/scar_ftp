@@ -130,7 +130,7 @@ class ftpClient:
             cmd = input("Enter cmd > ").strip()
 
             if cmd.upper() == 'HELP':
-                print("Client help options are help");
+                print("Client help options are help")
                 continue
             elif cmd.upper() == 'CONN':
                 self.cmdConnection()

@@ -21,14 +21,14 @@ class frontEnd(object):
     def serverRegister(self, uri):
         print("Server registering URI %s: " % uri)
         remoteServerList.append(remoteServer(uri))
-#        print("done remoteServer");
+#        print("done remoteServer")
 
     def clientStatus(self):
         status = "FrontEnd running successfully\n"
         for server in remoteServerList:
             status += "Server %s\n  Total number of files %u\n" % (server.uri, server.no_files)
         status += "\nTotal number of files known about by the whole system %u\n" % (len(remoteFiles))
-        return status;
+        return status
 
     def clientList(self):
         status = "Total number of files %u\n" % len(remoteFiles)
@@ -47,7 +47,7 @@ class frontEnd(object):
                 status += "%- 30.30s (is stored on %u/%u servers)\n" % (file, stored_on_count, len(remoteServerList))
             else:
                 status += "%- 30.30s (is stored on a single file server)\n" % file
-        return status;
+        return status
 
     def clientUploadChk(self, fileName):
 #        print("clientUploadChk fileName=%s" % fileName)
@@ -87,7 +87,7 @@ class frontEnd(object):
 
     def clientDelete(self, fileName):
 #        print("clientDelete file \"%s\"" % (fileName))
-        total_deletes = 0;
+        total_deletes = 0
         for server in remoteServerList:
             total_deletes += server.rmi.cmdDelete(fileName)
 
@@ -115,7 +115,7 @@ def updateFileList():
 #                    print("for file %s not found so adding" % (file))
                     remoteFiles.append(file)
                     file_index = remoteFiles.index(file)
-                remoteFilesServers[file_index,index] = True;
+                remoteFilesServers[file_index,index] = True
         except Exception as e:
             print("server %s LIST failed %s" % (server.uri, e))
 

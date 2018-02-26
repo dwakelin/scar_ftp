@@ -22,7 +22,7 @@ class server(object):
 
     def cmdList(self):
 #        print("cmd LIST called")
-        self.directoryListing.clear();
+        self.directoryListing.clear()
         self.addDirectoryContentsToList('.')
         return self.directoryListing
 

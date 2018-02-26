@@ -36,6 +36,12 @@ class ftpServer:
         self.clientSocket.send(lenData)
         return
 
+    def sendLenBinaryData(self, data):
+        #sends length of data to client
+        lenData = struct.pack('!i', len(data)) + data
+        self.clientSocket.send(lenData)
+        return
+
     def sendInt(self, value):
         #sends int to client
         lenData = struct.pack('!i', value)
@@ -86,7 +92,7 @@ class ftpServer:
          
     def cmdList(self):
         #lists files on server
-        self.directoryListing = '';
+        self.directoryListing = ''
         self.addDirectoryContentsToList('.')
         self.sendLenData(self.directoryListing)
         return
@@ -155,14 +161,14 @@ class ftpServer:
                     data = self.clientSocket.recv(1024)
                 except Exception as e:
                     print("connect to %s failed %s" % (addr, e))
-                    break;
+                    break
                 
                 if not data: break    
                 stringdata = data.decode('utf-8')
                 print("Got cmd %s from %s" % (stringdata, str(addr)))
             
                 if stringdata.upper() == 'HELP':
-                    print("Help options are help");
+                    print("Help options are help")
                 elif stringdata.upper() == 'LIST':
                     self.cmdList()
                 elif stringdata.upper() == 'UPLD':
