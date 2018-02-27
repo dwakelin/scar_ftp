@@ -13,6 +13,7 @@ class server(object):
         return True
         
     def addDirectoryContentsToList(self, path):
+        #adds files to list
         for dir in os.listdir(path):                
             dirPath = os.path.join(path,dir)
             if os.path.isdir(dirPath):
@@ -21,7 +22,8 @@ class server(object):
                 self.directoryListing.append(dirPath)
 
     def cmdList(self):
-#        print("cmd LIST called")
+        #print("cmd LIST called")
+        #prints list of files
         self.directoryListing.clear()
         self.addDirectoryContentsToList('.')
         return self.directoryListing
@@ -30,6 +32,7 @@ class server(object):
         raw = serpent.tobytes(data)
         print("cmdUpload file \"%s\", size %u bytes" % (file, len(raw)))
 #        print("raw=%s" % raw)
+        #upload files
         new_file = open(file, "wb")
         new_file.write(raw)
         new_file.close()
@@ -39,6 +42,7 @@ class server(object):
         print("cmdDownload file \"%s\"" % (fileName))
         if not os.path.isfile(fileName):
             return "";
+        #dowloads file
         file = open(fileName, "rb")
         data = file.read()
         file.close()
@@ -46,6 +50,7 @@ class server(object):
 
     def cmdDelete(self, file):
         print("cmdDelete file \"%s\"" % (file))
+        #checks if file exists and deletes it
         if os.path.isfile(file):
             os.remove(file)
             return 1

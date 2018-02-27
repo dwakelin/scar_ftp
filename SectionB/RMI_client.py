@@ -7,6 +7,7 @@ import serpent
 class rmiClient:
     def cmdUpload(self, toAll):
         upload = input("Enter file you would like to upload > ").strip()
+        #check if file exists
         if os.path.isfile(upload):
             print("File exists")
         else:
@@ -16,6 +17,7 @@ class rmiClient:
         if file_exists != 1:
             print("Error: File already exists")
             return
+        #upload file to server
         file = open(upload, "rb")
         data = file.read()
         file.close()
@@ -25,6 +27,7 @@ class rmiClient:
 
     def cmdDownload(self):
        download = input("Enter file you would like to download > ").strip()
+       #checks if file exists locally
        if os.path.isfile(download):
             print("Error file already exits locally")
             return
@@ -36,6 +39,7 @@ class rmiClient:
        if data == "":
             print("Error file does not exist remotely")
             return
+       #downloads file if doesn't appear locally
        new_file = open(download, "wb")
        new_file.write(serpent.tobytes(data))
        new_file.close()
@@ -44,6 +48,7 @@ class rmiClient:
         delete = input("Enter file you would like to delete > ").strip()
         # wait for server reply
         file_exists = frontEnd.clientDeleteChk(delete)
+        #checks if file exists and if you want to delete it
         if file_exists != -1:
             cmd = input("Do you want to delete %s? (Yes, No)" % delete).strip()
             if cmd.upper() == 'YES':
@@ -62,6 +67,7 @@ class rmiClient:
             cmd = input("Enter cmd > ").strip()
 
             if cmd.upper() == 'HELP':
+            #available commands for client
                 print("Client help options:"
                 print("LIST\tlist files on remote server")
                 print("UPLD\tupload a file to the server")

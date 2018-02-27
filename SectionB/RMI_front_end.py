@@ -78,6 +78,7 @@ class frontEnd(object):
         return "Success transferred %u bytes " % len(raw)
 
     def clientDeleteChk(self, fileName):
+        #checks if file exists
 #        print("clientDeleteChk fileName=%s" % fileName)
         ret = -1
         if fileName in remoteFiles:
@@ -86,6 +87,7 @@ class frontEnd(object):
         return ret
 
     def clientDelete(self, fileName):
+    #delete file
 #        print("clientDelete file \"%s\"" % (fileName))
         total_deletes = 0
         for server in remoteServerList:
@@ -95,6 +97,7 @@ class frontEnd(object):
         return "total_deletes=%u" % total_deletes
 
     def clientDownloadChk(self, fileName):
+        #checks if file exists
         print("clientDownloadChk fileName=%s" % fileName)
         ret = -1
         if fileName in remoteFiles:
@@ -103,6 +106,7 @@ class frontEnd(object):
         return ret
 
     def clientDownload(self, fileName):
+        #downloads file
         print("clientDownload file \"%s\"" % (fileName))
         index = remoteFiles.index(fileName)
         print("%u: %s" % (index, fileName))
