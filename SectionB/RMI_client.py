@@ -62,7 +62,13 @@ class rmiClient:
             cmd = input("Enter cmd > ").strip()
 
             if cmd.upper() == 'HELP':
-                print("Client help options are help")
+                print("Client help options:"
+                print("LIST\tlist files on remote server")
+                print("UPLD\tupload a file to the server")
+                print("UPLDHR\tupload a file to the server???")
+                print("DWLD\tdownload a file from the server")
+                print("DELF\tdelete a file from the server")
+                print("QUIT\tclose session")
                 continue
             elif cmd.upper() == 'LIST':
                 print(frontEnd.clientList())
