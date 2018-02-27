@@ -58,7 +58,7 @@ class ftpClient:
         #recieves int from server
         temp = self.socketReadSize(4)
         value = struct.unpack('!i', temp)[0]
-        print("recvInt received %i" % value)
+        #print("recvInt received %i" % value)
         return value
         
     def cmdList(self):
@@ -144,12 +144,16 @@ class ftpClient:
     def requestLoop(self):
         while True:
             # "prompt user for operation" state
-            cmd = input("Enter cmd > ").strip()                             
+            cmd = input("Enter cmd > ").strip()    
 
             if cmd.upper() == 'HELP':
-                print("Client help options are help")
+                print("Client help options:")
                 print("CONN\tconnect to server")
                 print("LIST\tlist files on remote server")
+                print("UPLD\tupload a file to the server")
+                print("DWLD\tdownload a file from the server")
+                print("DELF\tdelete a file from the server")
+                print("QUIT\tclose session")
                 continue
             elif cmd.upper() == 'CONN':
                 self.cmdConnection()
