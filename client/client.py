@@ -2,6 +2,7 @@
 import socket
 import struct
 import os
+import time
 
 class ftpClient:
     def __init__(self):
@@ -67,11 +68,12 @@ class ftpClient:
         self.recvLenData()
     
     def cmdUpload(self):
+        tic = time.clock() 
         #enter file you wnat to upload
         upload = input("Enter file you would like to upload > ").strip()
         #checks if file exists or not on the client
         if os.path.isfile(upload):
-            print("File uploaded to server")
+            print("File exists")
         else:
             print("File does not exist")
             return
@@ -80,14 +82,19 @@ class ftpClient:
         #checks if file exists or not on the server
         file_exists = self.recvInt()
         if file_exists != 1:
-            print("Error: File already exists")
+            print("Error: File already exists on server")
             return
         #uploads file to server
         file = open(upload, "rb")
         data = file.read()
         file.close()
-        self.sendLenBinaryData(data)    
-        print("Successfully uploaded file of %u bytes" % len(data))
+        self.sendLenBinaryData(data)   
+        toc = time.clock()
+        t_time = toc - tic
+        print("Successfully uploaded file of %u bytes in %s seconds" % (len(data),round(t_time,2)))
+        # toc = time.clock()
+        # t_time = toc - tic
+        # print ("%s seconds to complete" % round(t_time,2))
 
     def cmdDownload(self):
         download = input("Enter file you would like to download > ").strip()
@@ -116,7 +123,7 @@ class ftpClient:
     def sendLenBinaryData(self, data):
         #send length of binary data to the server
         lenData = struct.pack('!I', len(data)) + data
-        print("sending lenData %u bytes" % len(data))
+        #print("sending lenData %u bytes" % len(data))
         self.serverClient.sendall(lenData)
          
     def cmdDelete(self):
