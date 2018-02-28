@@ -92,14 +92,12 @@ class ftpClient:
         toc = time.clock()
         t_time = toc - tic
         print("Successfully uploaded file of %u bytes in %s seconds" % (len(data),round(t_time,2)))
-        # toc = time.clock()
-        # t_time = toc - tic
-        # print ("%s seconds to complete" % round(t_time,2))
 
     def cmdDownload(self):
+        tic = time.clock()
         download = input("Enter file you would like to download > ").strip()
         if os.path.isfile(download):
-            print("Error file already exits locally")
+            print("Error: File already exits locally")
             return
         self.send('DWLD')
         self.sendLenData(download)
@@ -111,13 +109,15 @@ class ftpClient:
         new_file = open(download, "wb")
         new_file.write(data)
         new_file.close()
-        print("Successfully downloaded file of %u bytes" % server_response)
+        toc = time.clock()
+        t_time = toc - tic
+        print("Successfully downloaded file of %u bytes in %s seconds" % (server_response,round(t_time,2)))
 
     def sendLenData(self, data):
         #send length of data to the server
         b = bytes(data, 'utf-8')
         lenData = struct.pack('!I', len(b)) + b
-#        print("sending lenData '%s'" % lenData)
+#       print("sending lenData '%s'" % lenData)
         self.serverClient.send(lenData)
          
     def sendLenBinaryData(self, data):
