@@ -7,12 +7,9 @@ import time
 
 class rmiClient:
     def cmdUpload(self, toAll):
-        tic = time.clock()
         upload = input("Enter file you would like to upload > ").strip()
         #check if file exists
-        if os.path.isfile(upload):
-            print("File exists")
-        else:
+        if not os.path.isfile(upload):
             print("File does not exist")
             return
         file_exists = frontEnd.clientUploadChk(upload)
@@ -20,17 +17,17 @@ class rmiClient:
             print("Error: File already exists")
             return
         #upload file to server
+        tic = time.clock()
         file = open(upload, "rb")
         data = file.read()
         file.close()
         toc = time.clock()
         t_time = toc - tic
 
-        print("data len=%u in %s seconds" % (len(data), round(t_time,2)))
-        print(frontEnd.clientUpload(upload, toAll, data))
+        print("%u bytes transferred in %s seconds" % (len(data), round(t_time,2)))
+        frontEnd.clientUpload(upload, toAll, data)
 
     def cmdDownload(self):
-       tic = time.clock()
        download = input("Enter file you would like to download > ").strip()
        #checks if file exists locally
        if os.path.isfile(download):
@@ -45,12 +42,14 @@ class rmiClient:
             print("Error file does not exist remotely")
             return
        #downloads file if doesn't appear locally
+       tic = time.clock()
+       converted_data = serpent.tobytes(data)
        new_file = open(download, "wb")
-       new_file.write(serpent.tobytes(data))
+       new_file.write(converted_data)
        new_file.close()
        toc = time.clock()
        t_time = toc - tic
-       print("data len=%u in %s seconds" % (len(data), round(t_time,2)))
+       print("%u bytes transferred in %s seconds" % (len(converted_data), round(t_time,2)))
 
     def cmdDelete(self):
         delete = input("Enter file you would like to delete > ").strip()
@@ -60,7 +59,7 @@ class rmiClient:
         if file_exists != -1:
             cmd = input("Do you want to delete %s? (Yes, No)" % delete).strip()
             if cmd.upper() == 'YES':
-                print(frontEnd.clientDelete(delete))
+                frontEnd.clientDelete(delete)
                 print ("File deleted")
             if cmd.upper() == 'NO':
                 print ("Delete abandoned by the user!")
@@ -76,10 +75,11 @@ class rmiClient:
 
             if cmd.upper() == 'HELP':
             #available commands for client
-                print("Client help options:"
+                print("Client help options:")
+                print("STATUS\tshows status of entire system")
                 print("LIST\tlist files on remote server")
                 print("UPLD\tupload a file to the server")
-                print("UPLDHR\tupload a file to the server???")
+                print("UPLDHR\tupload a file to all servers")
                 print("DWLD\tdownload a file from the server")
                 print("DELF\tdelete a file from the server")
                 print("QUIT\tclose session")

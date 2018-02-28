@@ -68,13 +68,10 @@ class ftpClient:
         self.recvLenData()
     
     def cmdUpload(self):
-        tic = time.clock() 
         #enter file you wnat to upload
         upload = input("Enter file you would like to upload > ").strip()
         #checks if file exists or not on the client
-        if os.path.isfile(upload):
-            print("File exists")
-        else:
+        if not os.path.isfile(upload):
             print("File does not exist")
             return
         self.send('UPLD')
@@ -85,6 +82,7 @@ class ftpClient:
             print("Error: File already exists on server")
             return
         #uploads file to server
+        tic = time.clock() 
         file = open(upload, "rb")
         data = file.read()
         file.close()
@@ -94,7 +92,6 @@ class ftpClient:
         print("Successfully uploaded file of %u bytes in %s seconds" % (len(data),round(t_time,2)))
 
     def cmdDownload(self):
-        tic = time.clock()
         download = input("Enter file you would like to download > ").strip()
         if os.path.isfile(download):
             print("Error: File already exits locally")
@@ -105,6 +102,7 @@ class ftpClient:
         if server_response == -1:
             print("No such file on server")
             return
+        tic = time.clock()
         data = self.socketReadSize(server_response)
         new_file = open(download, "wb")
         new_file.write(data)
