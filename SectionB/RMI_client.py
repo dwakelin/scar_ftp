@@ -3,9 +3,11 @@ import struct
 import os
 import Pyro4
 import serpent
+import time
 
 class rmiClient:
     def cmdUpload(self, toAll):
+        tic = time.clock()
         upload = input("Enter file you would like to upload > ").strip()
         #check if file exists
         if os.path.isfile(upload):
@@ -21,11 +23,14 @@ class rmiClient:
         file = open(upload, "rb")
         data = file.read()
         file.close()
+        toc = time.clock()
+        t_time = toc - tic
 
-        print("data len=%u" % (len(data)))
+        print("data len=%u in %s seconds" % (len(data), round(t_time,2)))
         print(frontEnd.clientUpload(upload, toAll, data))
 
     def cmdDownload(self):
+       tic = time.clock()
        download = input("Enter file you would like to download > ").strip()
        #checks if file exists locally
        if os.path.isfile(download):
@@ -43,6 +48,9 @@ class rmiClient:
        new_file = open(download, "wb")
        new_file.write(serpent.tobytes(data))
        new_file.close()
+       toc = time.clock()
+       t_time = toc - tic
+       print("data len=%u in %s seconds" % (len(data), round(t_time,2)))
 
     def cmdDelete(self):
         delete = input("Enter file you would like to delete > ").strip()
