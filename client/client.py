@@ -186,5 +186,5 @@ class ftpClient:
         self.serverClient.close()
 
 client = ftpClient()
-client.openConnection("localhost", 9999)    # temp for testing
+#client.openConnection("localhost", 9999)    # temp for testing
 client.requestLoop()
