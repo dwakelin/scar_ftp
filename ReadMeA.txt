@@ -9,4 +9,4 @@ From client you can enter HELP which will bring up the various commands and what
 	Upld- Allows you to upload a file onto the server
 	Dwld- Allows you to download a file onto the server
 	Delf- Allows you to delete a file from the sever
-	Quit- Closes the socket
+	Quit- Quits the client

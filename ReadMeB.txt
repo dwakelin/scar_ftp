@@ -1,10 +1,10 @@
 To run the code:
 ~Need Python3 and Pyro4 installed (pip install Pyro4)~
-python -u RMI_front_end.py (This will print something like 'Front end ready: Object uri =', <Pyro4.core.URI at 0x4eea9b0; PYRO:obj_5d9b57c23df84c9a94b30d78dce3e79d@localhost:50332>
-python -u RMI_server.py (This will ask for Pyro uri of front end, which is the PYRO bit above)
-python -u RMI_client.py (This will ask for Pyro uri of front end, which is the PYRO bit above)
+python -u RMI_front_end.py (This will print something like Front end ready: Object uri = PYRO:obj_89fa3d6f92b841aba131151249a7714a@localhost:50370
+python -u RMI_server.py (This will ask for Pyro uri of front end, which is the PYRO bit above e.g PYRO:obj_89fa3d6f92b841aba131151249a7714a@localhost:50370)
+python -u RMI_client.py (This will ask for Pyro uri of front end, which is the PYRO bit above e.g PYRO:obj_89fa3d6f92b841aba131151249a7714a@localhost:50370)
 
-You can have up to 3 servers running at once.
+You can have multiple servers running at once.
 Enter HELP to get the available commands:
 	STATUS- shows status of entire system
 	LIST- lists files on remote server
@@ -12,4 +12,4 @@ Enter HELP to get the available commands:
 	UPLDHR- uploads a file to all of the servers
 	DWLD- downloads a file from the server
 	DELF- deletes a file from the server
-	QUIT- closes session 
+	QUIT- quits the client 
