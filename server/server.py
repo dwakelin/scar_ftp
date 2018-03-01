@@ -105,6 +105,7 @@ class ftpServer:
         if os.path.isfile(file):
             self.sendInt(-1)
             print ("sent -1")
+            return
         else:
             self.sendInt(1)
             print ("sent 1")
