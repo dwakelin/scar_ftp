@@ -50,6 +50,7 @@ class frontEnd(object):
         return status
 
     def clientUploadChk(self, fileName):
+        fileName = checkFileName(fileName)
 #        print("clientUploadChk fileName=%s" % fileName)
         ret = 1
         if fileName in remoteFiles:
@@ -79,6 +80,7 @@ class frontEnd(object):
 
     def clientDeleteChk(self, fileName):
         #checks if file exists
+        fileName = checkFileName(fileName)
 #        print("clientDeleteChk fileName=%s" % fileName)
         ret = -1
         if fileName in remoteFiles:
@@ -98,11 +100,12 @@ class frontEnd(object):
 
     def clientDownloadChk(self, fileName):
         #checks if file exists
-        print("clientDownloadChk fileName=%s" % fileName)
+        fileName = checkFileName(fileName)
+#        print("clientDownloadChk fileName=%s" % fileName)
         ret = -1
         if fileName in remoteFiles:
             ret = 1
-        print("clientDownloadChk ret=%u" % ret)
+#        print("clientDownloadChk ret=%u" % ret)
         return ret
 
     def clientDownload(self, fileName):
@@ -120,6 +123,15 @@ class frontEnd(object):
 daemon = Pyro4.Daemon()        # make a Pyro daemon
 uri = daemon.register(frontEnd)   # register the Hello as a Pyro object
 
+# some systems return ".\LargeFile.mp4" instead of "LargeFile.mp4"
+def checkFileName(fileName):
+    if fileName.startswith('.\\'):
+        fileName = fileName[2:]
+    elif fileName.startswith('./'):
+        fileName = fileName[2:]
+    return fileName
+
+# build up list of remote files from remote servers
 def updateFileList():
     remoteFiles.clear()
     remoteFilesServers.clear()
@@ -130,6 +142,7 @@ def updateFileList():
 #            print("files %u" % len(files))
             server.no_files = len(files)
             for file in files:
+                file = checkFileName(file)
 #                print("  %s" % file)
                 try:
                     file_index = remoteFiles.index(file)
@@ -142,6 +155,7 @@ def updateFileList():
         except Exception as e:
             print("server %s LIST failed %s" % (server.uri, e))
 
+# check remote servers are still alive
 def poll_thread():
     while True:
 #        print("sleeping 10 sec from thread")
