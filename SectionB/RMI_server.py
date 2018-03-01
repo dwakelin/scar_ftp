@@ -42,7 +42,7 @@ class server(object):
         print("cmdDownload file \"%s\"" % (fileName))
         if not os.path.isfile(fileName):
             return "";
-        #dowloads file
+        #downloads file
         file = open(fileName, "rb")
         data = file.read()
         file.close()
