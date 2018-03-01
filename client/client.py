@@ -151,6 +151,7 @@ class ftpClient:
             # "prompt user for operation" state
             cmd = input("Enter cmd > ").strip()    
 
+            # show help
             if cmd.upper() == 'HELP':
                 print("Client help options:")
                 print("CONN\tconnect to server")
@@ -160,10 +161,21 @@ class ftpClient:
                 print("DELF\tdelete a file from the server")
                 print("QUIT\tclose session")
                 continue
-            elif cmd.upper() == 'CONN':
+
+            # check fr local cmds (don't need an active connection)
+            if cmd.upper() == 'CONN':
                 self.cmdConnection()
                 continue
-            elif cmd.upper() == 'LIST':
+            elif cmd.upper() == 'QUIT':
+                print("Closing session to server")
+                exit(0)
+
+            # following cmds need an active connection to work, so check...
+            if self.serverClient is None:
+                print("No connection to a server, you must connect (using CONN) first")
+                continue
+
+            if cmd.upper() == 'LIST':
                 self.cmdList()
                 continue
             elif cmd.upper() == 'UPLD':
@@ -175,14 +187,7 @@ class ftpClient:
             elif cmd.upper() == 'DELF':
                 self.cmdDelete()
                 continue
-            elif cmd.upper() == 'QUIT':
-                print("Closing session to server")
-                exit(0)
              
-            if self.serverClient is None:
-                print("No connection to a server, you must connect (using CONN) first")
-                continue
-
         self.serverClient.close()
 
 client = ftpClient()
