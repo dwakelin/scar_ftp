@@ -48,6 +48,10 @@ class ftpServer:
 #        print("sending lenData '%s'" % lenData)
         self.clientSocket.send(lenData)
         return
+    
+    def sendUpldTime(self, t_time):
+        self.clientSocket.send(t_time)
+        return
 
     def addDirectoryContentsToList(self, path):
         for dir in os.listdir(path):                
@@ -99,23 +103,28 @@ class ftpServer:
         
     def cmdUpload(self):
         #recieves length of data from client
+        tic = time.clock()
         file = self.recvLenData()
         print("got %s file to upload" % file)
         #checks to see if file already exists on server
         if os.path.isfile(file):
             self.sendInt(-1)
-            print ("sent -1")
+            #print ("sent -1")
             return
         else:
             self.sendInt(1)
-            print ("sent 1")
+            #print ("sent 1")
         #uploads file to server
         data = self.recvLenBinaryData()
         new_file = open(file, "wb")
         new_file.write(data)
         new_file.close()
+        toc = time.clock()
+        t_time = toc - tic
+        print("Successfully uploaded file of %u bytes in %s seconds" % (len(data),round(t_time,2)))
 
     def cmdDownload(self):
+        tic = time.clock()
         download = self.recvLenData()
         if os.path.isfile(download):
             print("File %s exists for downloaded to client" % download)
@@ -128,6 +137,9 @@ class ftpServer:
         data = file.read()
         file.close()
         self.sendLenBinaryData(data)
+        toc = time.clock()
+        t_time = toc - tic
+        print("Successfully uploaded file of %u bytes in %s seconds" % (len(data),round(t_time,2)))
 
     def cmdDelete(self):
         #recieves lenth of data from client

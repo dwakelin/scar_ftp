@@ -61,6 +61,11 @@ class ftpClient:
         value = struct.unpack('!i', temp)[0]
         #print("recvInt received %i" % value)
         return value
+    
+    def recvUpldTime(self):
+        temp = self.socketReadSize(4)
+        value = struct.unpack('!i', temp)[0]
+        return value
         
     def cmdList(self):
         #lists files on the server
@@ -82,14 +87,14 @@ class ftpClient:
             print("Error: File already exists on server")
             return
         #uploads file to server
-        tic = time.clock() 
+        #tic = time.clock() 
         file = open(upload, "rb")
         data = file.read()
         file.close()
         self.sendLenBinaryData(data)   
-        toc = time.clock()
-        t_time = toc - tic
-        print("Successfully uploaded file of %u bytes in %s seconds" % (len(data),round(t_time,2)))
+        #toc = time.clock()
+        #t_time = toc - tic
+        print("Successfully uploaded file of %u bytes in %s seconds" % (len(data),self.recvUpldTime(upload)))
 
     def cmdDownload(self):
         download = input("Enter file you would like to download > ").strip()
@@ -102,14 +107,14 @@ class ftpClient:
         if server_response == -1:
             print("No such file on server")
             return
-        tic = time.clock()
+        #tic = time.clock()
         data = self.socketReadSize(server_response)
         new_file = open(download, "wb")
         new_file.write(data)
         new_file.close()
-        toc = time.clock()
-        t_time = toc - tic
-        print("Successfully downloaded file of %u bytes in %s seconds" % (server_response,round(t_time,2)))
+        #toc = time.clock()
+        #t_time = toc - tic
+        #print("Successfully downloaded file of %u bytes in %s seconds" % (server_response,round(t_time,2)))
 
     def sendLenData(self, data):
         #send length of data to the server
